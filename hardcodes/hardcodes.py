@@ -58,7 +58,7 @@ def _is_escaped(string):
 def _if_comment_started(string, comment_strings):
     """
     checks if given string starts a comment
-    returns string required to close the comment and its position within the string
+    returns string required to close the comment and length of string that started the comment
     returns False on failure
     """
     for comment_start, comment_end in comment_strings.items():
@@ -70,8 +70,7 @@ def _if_comment_started(string, comment_strings):
 def _if_comment_ended(string, comment_end):
     """
     checks if given string ends a comment
-    returns position of comment ending substring within the string
-    returns False on failure
+    returns bool representing if given strings closes the comment or not
     """
     if string.startswith(comment_end):
         return True
