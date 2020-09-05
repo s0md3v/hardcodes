@@ -49,10 +49,7 @@ def _is_escaped(string):
             count += 1
         else:
             break
-    if count % 2:
-        return True
-    else:
-        return False
+    return count % 2
 
 
 def _if_comment_started(string, comment_strings):
@@ -64,17 +61,6 @@ def _if_comment_started(string, comment_strings):
     for comment_start, comment_end in comment_strings.items():
         if string.startswith(comment_start):
             return (comment_end, len(comment_start))
-    return False
-
-
-def _if_comment_ended(string, comment_end):
-    """
-    checks if given string ends a comment
-    returns bool representing if given strings closes the comment or not
-    """
-    if string.startswith(comment_end):
-        return True
-    return False
 
 
 def _tokenize(code, comments, comment_strings, containers):
@@ -93,7 +79,7 @@ def _tokenize(code, comments, comment_strings, containers):
             continue
         buff = code[index:index+4]
         if comment:
-            if _if_comment_ended(buff, comment_end):
+            if buff.startswith(comment_end):
                 skip = len(comment_end)
                 if comments == 'string' and string:
                     all_strings.append(string)
