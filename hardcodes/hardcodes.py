@@ -80,7 +80,7 @@ def _tokenize(code, comments, comment_strings, containers, show_line_numbers, qu
     
     for index, char in enumerate(code):
 
-        if char == '\n':
+        if show_line_numbers and (char == '\n'):
             line_number += 1
             continue
             
