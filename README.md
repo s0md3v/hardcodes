@@ -28,11 +28,14 @@ jsp, lua, pascal, perl, php, powershell, python, ruby, scala, sql, swift, xml
 ```
 
 #### Installation
+
 ##### with pip
+
 ```
 pip3 install hardcodes
 ```
 ##### or build from source
+
 ```
 git clone https://github.com/s0md3v/hardcodes && cd hardcodes && python3 setup.py install
 ```
@@ -40,12 +43,14 @@ git clone https://github.com/s0md3v/hardcodes && cd hardcodes && python3 setup.p
 <hr>
 
 ### Documentation
+
 hardcodes is available as both a library as well as a command line program. The relevant documentation can be found below:
 
 - [For developers](https://github.com/s0md3v/hardcodes#for-developers)
 - [For users](https://github.com/s0md3v/hardcodes#for-users)
 
 ### For Developers
+
 The sample program below demonstrates usage of `hardcodes` library
 
 ```python
@@ -55,6 +60,7 @@ string = "console.log('hello there')"
 result = search(string, lang="common", comments="parse")
 print(result)
 ```
+
 ```python
 Output: ['hello there']
 ```
@@ -64,24 +70,29 @@ The arguments `lang` and `comments` are optional. Their use is explained below i
 <hr>
 
 ### For Users
+
 `cli.py` provides a grep-like command line interface to `hardcodes` library. You will need to install the library first to use it.
 
 #### Find strings in a file
+
 ```bash
 python cli.py /path/to/file.ext
 ```
 
 #### Find strings in a directory, recursively
+
 ```bash
 python cli.py -r /path/to/dir
 ```
 
 #### Hide paths from output
+
 ```bash
 python cli.py -o /path/to/file.ext
 ```
 
 #### Specify programming language
+
 Specifying a language is optional and should be used only when the programming language of source is already known.
 
 ```bash
@@ -89,10 +100,40 @@ python cli.py -l 'golang' /path/to/file.go
 ```
 
 #### Specify comment behaviour
-With `-c` option, you can specify 
+
+With `-c` option, you can specify
 
 - `ignore` ignore the comments completely
 - `parse`  parse the comments like code
 - `string` add comments to list of hardcoded strings
 
 `python cli.py -o /path/to/file.ext`
+
+#### Specify line numbers
+
+With the `-n`, `--line-numbers` option, you can attach the line numbers where 
+string occurred. This can be used to locate the line in code easily, or to
+use as input into a script that will modify the strings for you.
+
+The line numbers are inserted between the file name, and string, also using ':'
+as a seperator. (See 'filter' example below).
+
+#### Filter output by regular expression
+
+With the `-q`, `--query` option, the output can be filtered by applying a
+regular expression (supplied on the command line) to the extracted string.
+
+This can be used for specific tasks, such as changing all occurances of a 
+product's name, or publisher.
+
+```bash
+python cli.py -l python -n -q "source code" cli.py
+```
+
+which gives the following output:
+
+```
+cli.py:12:specify programming language of source code
+cli.py:13:include source code line numbers in output
+```
+

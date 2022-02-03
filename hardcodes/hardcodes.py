@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import re
+
 def _gen_config(lang):
     """
     generate config for tokenization
@@ -63,7 +65,7 @@ def _if_comment_started(string, comment_strings):
             return (comment_end, len(comment_start))
 
 
-def _tokenize(code, comments, comment_strings, containers):
+def _tokenize(code, comments, comment_strings, containers, show_line_numbers, query_match):
     """
     tokenizes sources code to find hardcoded strings
     returns list of hardcoded strings
@@ -73,7 +75,15 @@ def _tokenize(code, comments, comment_strings, containers):
     skip = 0
     comment = False
     all_strings = []
+    
+    line_number = 1
+    
     for index, char in enumerate(code):
+
+        if show_line_numbers and (char == '\n'):
+            line_number += 1
+            continue
+            
         if skip > 0:
             skip -= 1
             continue
@@ -107,21 +117,33 @@ def _tokenize(code, comments, comment_strings, containers):
                 state = 'store'
                 container = char
             elif state == 'store' and char == container and not _is_escaped(code[:index]):
+                
                 if string:
-                    all_strings.append(string)
+                    if show_line_numbers:
+                        found_string = f"{line_number}:{string}"
+                    else:
+                        found_string = f"{string}"
+                    
+                    if query_match in ['', None]:
+                        all_strings.append( found_string )
+                    
+                    elif re.search(query_match, string):
+                        all_strings.append( found_string )
+
                 string = ''
                 state = 'look'
             else:
                 string += char
         elif state == 'store':
             string += char
+            
     return all_strings
 
 
-def search(code, lang='common', comments='parse'):
+def search(code, lang='common', comments='parse', show_line_numbers=False, query_match=''):
     """
     main function that calls other functions
     returns list of hardcoded strings
     """
     containers, comment_strings = _gen_config(lang)
-    return _tokenize(code, comments, comment_strings, containers)
+    return _tokenize(code, comments, comment_strings, containers, show_line_numbers, query_match)
